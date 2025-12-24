@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'api_service.dart';
-import 'AuthProvider.dart';
+import 'waiting_approval_screen.dart';
+import 'package:flutter_project/api/AuthProvider.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {

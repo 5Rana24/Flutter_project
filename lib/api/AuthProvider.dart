@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../models/UserModel.dart';
+//import '../models/UserModel.dart';
 import 'package:provider/provider.dart';
-import '../models/ProfileModel.dart';
+import 'package:flutter_project/data/models/UserModel.dart';
+import 'package:flutter_project/data/models/ProfileModel.dart';
+
 
 class AuthProvider with ChangeNotifier {
   UserModel? _user;

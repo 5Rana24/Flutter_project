@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_clean_app/Homepage.dart';
-import 'package:my_clean_app/ProfileForm.dart';
-import 'package:my_clean_app/VirifingPage.dart';
-import 'package:my_clean_app/ProfileForm.dart';
+import 'package:flutter_project/MainRoutes/Homeoage.dart';
+import 'VirifingPage.dart';
+import 'ProfileForm.dart';
 import 'dart:io';
-import 'api_service.dart';
-import 'AuthProvider.dart';
+import 'package:flutter_project/api/AuthProvider.dart';
+//import 'AuthProvider.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {

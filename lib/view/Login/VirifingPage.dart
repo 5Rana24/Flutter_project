@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:my_clean_app/ProfileForm.dart';
+import 'ProfileForm.dart';
 //import 'package:http/http.dart';
 import 'package:http/http.dart'as http;
 import 'dart:convert';
-import 'package:my_clean_app/Homepage.dart';
-import 'api_service.dart';
+import 'package:flutter_project/MainRoutes/Homeoage.dart';
 import 'package:provider/provider.dart';
-import 'AuthProvider.dart';
+import 'package:flutter_project/api/AuthProvider.dart';
 
 
 class virifingpage extends StatefulWidget {
