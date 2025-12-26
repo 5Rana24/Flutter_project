@@ -5,7 +5,9 @@ import 'package:flutter_project/data/models/category-info.dart';
 
 class HomePageModel extends ChangeNotifier {
   final List<CategoryInfo> categoryList = [];
-  List<House> apts = [];  List<House> aptsSortedByPrice = [];
+  //new House(),new House(),new House()
+   List<House> apts = [new House(),new House(),new House() ];
+   List<House> aptsSortedByPrice = [];
   HomePageModel() {
     categoryList.addAll([
       CategoryInfo(
@@ -17,24 +19,19 @@ class HomePageModel extends ChangeNotifier {
         name: "Top Rated",
         image: "images/top-rated.png",
         apts: apts,
-        //pageBuilder: (w, h) =>
-        //TopRatedCategory(cardWidth: w, cardHeight: h, apts: apts),
       ),
       CategoryInfo(
         name: "Top Rented",
         image: "images/top-rented2.png",
         apts: apts,
-        // pageBuilder: (w, h) =>
-        //     TopRentedCategory(cardWidth: w, cardHeight: h, apts: apts),
       ),
       CategoryInfo(
         name: "Min Prices",
         image: "images/min-price.png",
         apts: apts,
-        // pageBuilder: (w, h) =>
-        //     MinPriceCategory(cardWidth: w, cardHeight: h, apts: apts),
       ),
     ]);
+    notifyListeners();
   }
 
   void loadApts(bool mounted) async {
@@ -70,18 +67,9 @@ class HomePageModel extends ChangeNotifier {
     // Flutter لن يحميك تلقائيًا في async
     // أنت مسؤول عن هذا الفحص.
     print("🚀 عدد الشقق القادمة من API = ${list.length}");
-    //   for (var h in list) print("⟹ ${h.toString()}");
-    // setState(() {
-    //   apts = list;
+    apts.clear();
+    apts.addAll(list);
+    notifyListeners();
 
-    //   // ترتيب حسب السعر
-    //   aptsSortedByPrice = List.from(list)
-    //     ..sort((a, b) =>
-    //         (a.price ?? double.infinity)
-    //             .compareTo(b.price ?? double.infinity));
-
-    //   CurrentBooking.apts.addAll({"2025.2.2": apts});
-    // });
-    apts = list;
   }
 }

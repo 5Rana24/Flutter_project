@@ -18,7 +18,7 @@ class AuthProvider with ChangeNotifier {
 
   /// تسجيل الدخول
   Future<String?> login(String phone) async {
-    final url = Uri.parse('https://bd872de38550.ngrok-free.app/api/auth/register');
+    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/auth/register');
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({'phone_number': phone});
 
@@ -47,7 +47,7 @@ class AuthProvider with ChangeNotifier {
   Future<bool> verifyOtp(String code) async {
     if (_token == null) return false;
 
-    final url = Uri.parse('https://bd872de38550.ngrok-free.app/api/auth/virify-otp');
+    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/auth/virify-otp');
 
     try {
       var request = http.MultipartRequest('POST', url);
@@ -77,7 +77,7 @@ class AuthProvider with ChangeNotifier {
   Future<ProfileModel?> getProfile() async {
     if (_token == null) return null;
 
-    final url = Uri.parse('https://bd872de38550.ngrok-free.app/api/users/profiles/');
+    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/users/profiles/');
     final headers = {
       'Authorization': 'Bearer $_token',
       'Accept': 'application/json',
@@ -121,7 +121,7 @@ class AuthProvider with ChangeNotifier {
   }) async {
     if (_token == null) return false;
 
-    final url = Uri.parse('https://bd872de38550.ngrok-free.app/api/users/profiles/');
+    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/users/profiles/');
 
     try {
       var request = http.MultipartRequest('POST', url);

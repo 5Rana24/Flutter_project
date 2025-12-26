@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/components/PageShowcards.dart';
 import 'package:flutter_project/data/models/House.dart';
 
-class CategoryInfo {
+class CategoryInfo extends ChangeNotifier {
   final String name;
   final String image;
   final List<House> apts;

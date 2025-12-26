@@ -53,7 +53,7 @@ class _ShowCategoriesHoriontal extends State<ShowCategoriesHoriontal> {
                 this.category,
                 style: TextStyle(
                   fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                  color: Theme.of(context).colorScheme.primary
+                  color: Colors.black
                   //fontWeight: FontWeight.bold
                 ),
               ),
@@ -66,7 +66,7 @@ class _ShowCategoriesHoriontal extends State<ShowCategoriesHoriontal> {
                 child: Text(
                   "show all",
                   style: TextStyle(fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
-                   color:Theme.of(context).colorScheme.tertiary,
+                   color:Theme.of(context).colorScheme.secondary,
                     ),
                   
                 ),
@@ -81,7 +81,7 @@ class _ShowCategoriesHoriontal extends State<ShowCategoriesHoriontal> {
           height: this.cardHeigth * 30 / 100,
           child: PageView.builder(
             controller: PageController(viewportFraction: 0.85),
-            itemCount: widget.apts.isEmpty ? 0 : 6,
+            itemCount: widget.apts.isEmpty ? 0 : (widget.apts.length > 6? 6 :widget.apts.length ),
             itemBuilder: (context, i) {
               bool favState = Favourite.isFavourite(widget.apts[i]);
               return InkWell(

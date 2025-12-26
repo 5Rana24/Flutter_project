@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/api/AuthProvider.dart';
 import 'package:flutter_project/api/api_service.dart';
 import 'package:flutter_project/view/Login/ProfileForm.dart';
 import 'package:flutter_project/view/MainRoutes/homepage.dart';
@@ -22,14 +23,14 @@ class _Notacceptedyet extends State<Notacceptedyet> {
     if (isChecking) return;
     isChecking = true;
 
-    final res = await ApiService.getProfile( context.read<Profile>().token,);
+    final res = await ApiService.getProfile( context.read<AuthProvider>().token!,);
 
     if (!mounted) return;
 
     if (res['data'] != null && res['data']['status'] == 'approved') {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => Homepage(token:context.read<Profile>().token,),
+          builder: (_) => Homepage(token:context.read<AuthProvider>().token!,),
         ),
       );
     } else {

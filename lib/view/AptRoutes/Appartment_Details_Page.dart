@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/data/models/User.dart';
+import 'package:flutter_project/view/AptRoutes/ReservationPage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_project/view/AptRoutes/FeatureItem.dart';
 import 'package:flutter_project/data/models/House.dart';
 import 'dart:convert';
+
+import 'package:provider/provider.dart';
+
 class ApartmentDetailsPage extends StatefulWidget {
   late House house;
   ApartmentDetailsPage({super.key, required this.house});
@@ -13,7 +18,7 @@ class ApartmentDetailsPage extends StatefulWidget {
 
 class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
   final Set<int> favorites = {};
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,114 +34,59 @@ class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
               padding: EdgeInsets.all(16),
               children: [
                 SizedBox(
-  height: 400,
-  child: Stack(
-    children: [
-      ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: Image.network(
-          widget.house.fullImageUrl,
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Image.asset(
-              "images/Img.png",
-              fit: BoxFit.cover,
-            );
-          },
-        ),
-      ),
+                  height: 400,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Image.network(
+                          widget.house.fullImageUrl,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "images/Img.png",
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                      ),
 
-      Positioned(
-        top: 10,
-        right: 10,
-        child: GestureDetector(
-          onTap: () {
-            setState(() {
-              if (favorites.contains(widget.house.id)) {
-                favorites.remove(widget.house.id);
-              } else {
-                favorites.add(widget.house.id!);
-              }
-            });
-          },
-          child: Icon(
-            favorites.contains(widget.house.id)
-                ? Icons.favorite
-                : Icons.favorite_border,
-            color: favorites.contains(widget.house.id)
-                ? Colors.red
-                : Colors.white,
-            size: 28,
-          ),
-        ),
-      ),
-    ],
-  ),
-),
-
-                // SizedBox(
-                //   height: 400,
-                //   child: PageView.builder(
-                //     itemCount: widget.house.image.length,
-                //     itemBuilder: (context, index) {
-                //       final imagePath = widget.house.image[index];
-                //       final isFavorite = favorites.contains(index);
-
-                //       return Padding(
-                //         padding: const EdgeInsets.all(12.0),
-                //         child: Stack(
-                //           children: [
-                //             ClipRRect(
-                //               borderRadius: BorderRadius.circular(14),
-                //               child: PageView.builder(
-                //                 itemCount: widget.house.image.length,
-                //                 itemBuilder: (context, index) {
-                //                   return Image.asset(
-                //                     imagePath,
-                //                     fit: BoxFit.cover,
-                //                     width: double.infinity,
-                //                   );
-                //                 },
-                //               ),
-                //             ),
-                //             Positioned(
-                //               top: 10,
-                //               right: 10,
-                //               child: GestureDetector(
-                //                 onTap: () {
-                //                   setState(() {
-                //                     if (isFavorite) {
-                //                       favorites.remove(index);
-                //                     } else {
-                //                       favorites.add(index);
-                //                     }
-                //                   });
-                //                 },
-                //                 child: Icon(
-                //                   isFavorite
-                //                       ? Icons.favorite
-                //                       : Icons.favorite_border,
-                //                   color: isFavorite ? Colors.red : Colors.white,
-                //                   size: 28,
-                //                 ),
-                //               ),
-                //             ),
-                //           ],
-                //         ),
-                //       );
-                //     },
-                //   ),
-                // ),
-
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              if (favorites.contains(widget.house.id)) {
+                                favorites.remove(widget.house.id);
+                              } else {
+                                favorites.add(widget.house.id!);
+                              }
+                            });
+                          },
+                          child: Icon(
+                            favorites.contains(widget.house.id)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: favorites.contains(widget.house.id)
+                                ? Colors.red
+                                : Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                    'Appartment Details:',
+                        'Appartment Details:',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -150,7 +100,7 @@ class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
                           Icon(Icons.star, color: Colors.orange),
                           Text(
                             "3.5",
-                           // '${widget.house.rating}',
+                            // '${widget.house.rating}',
                             style: TextStyle(fontSize: 16),
                           ),
                         ],
@@ -162,7 +112,7 @@ class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
                         style: TextStyle(fontSize: 16, color: Colors.black),
                       ),
                       Text(
-                       '${widget.house.description}' ,
+                        '${widget.house.description}',
                         style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                       ),
 
@@ -195,7 +145,7 @@ class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
                           FeatureItem(
                             icon: Icons.aspect_ratio,
                             label: 'Area',
-                            value:'${widget.house.area}' ,
+                            value: '${widget.house.area}',
                           ),
                           FeatureItem(
                             icon: Icons.location_on,
@@ -237,7 +187,15 @@ class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
               height: 50,
               child: MaterialButton(
                 color: Colors.teal,
-                onPressed: () {},
+                onPressed: () async {
+                  print("Button pressed to Book the apt");
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ReservationPage(house: widget.house,)
+                    ),
+                  );
+                },
                 textColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),

@@ -8,18 +8,18 @@ import 'waiting_approval_screen.dart';
 import 'package:flutter_project/api/AuthProvider.dart';
 import 'package:provider/provider.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends StatefulWidget with ChangeNotifier {
  // final String token;
  // final int userId;
  // final String phone;
 
-  const Profile(/*{required this.token, required this.userId, Key? key}) : */{super.key});
+   Profile(/*{required this.token, required this.userId, Key? key}) : */);
 
   @override
   State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<Profile> with ChangeNotifier {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final birthdateController = TextEditingController();

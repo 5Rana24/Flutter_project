@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/api/AuthProvider.dart';
 import 'package:flutter_project/data/models/HomePageModel.dart';
 import 'package:flutter_project/data/models/User.dart';
 import 'package:flutter_project/view/Login/ProfileForm.dart';
@@ -10,9 +11,18 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => User()), 
+        ChangeNotifierProvider(create: (_) =>UserModel(
+            id: 0,
+            phoneNumber: '',
+            status: '',
+            isAdmin: false,
+            isProvider: false,
+            isCustomer: false,
+            token: '',
+          ),
+        ),
         ChangeNotifierProvider(create: (_) => HomePageModel()), 
-        ChangeNotifierProvider(create: (_) => Profile(token: 'hello', userId: 12,)),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: MyApp(),
     ),
@@ -20,7 +30,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
   // This widget is the root of your application.
 
   @override
@@ -45,8 +55,9 @@ class MyApp extends StatelessWidget {
         
         )
         ),
-      home: Homepage(token: "hello"),
-      // home: Homepage(token: context.read<Profile>().token,),
+      // home: LoginScreen()
+       //context.read<AuthProvider>().token!
+      home: Homepage(token:"helllo",),
     );
   }
 }

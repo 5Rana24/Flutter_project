@@ -26,7 +26,7 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => _Homepage();
 }
 
-class _Homepage extends State<Homepage> {
+class _Homepage extends State<Homepage> with ChangeNotifier {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -49,7 +49,7 @@ void dispose() {
         cardHeight: MediaQuery.of(context).size.height * 0.9,
         cardwidth: MediaQuery.of(context).size.width,
         iconsSize: widget.iconsSize,
-        profileImg: context.watch<User>().profileImage,
+        //profileImg: context.watch<UserModel>().profileImage,
         scaffoldKey: widget.scaffoldKey,
       ),
       //////////////////////////////////////////////////AppBar
@@ -62,7 +62,7 @@ void dispose() {
             },
             child: CircleAvatar(
               radius: widget.iconsSize,
-              backgroundImage: context.watch<User>().profileImage // إذا كان ImageProvider مثل NetworkImage , i should see it /////////////////////////////
+              //backgroundImage: context.watch<UserModel>().image // إذا كان ImageProvider مثل NetworkImage , i should see it /////////////////////////////
             ),
           ),
         ),
@@ -104,7 +104,7 @@ void dispose() {
                             fontSize: Theme.of(
                               context,
                             ).textTheme.bodyLarge!.fontSize,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Colors.black,
                           ),
                         ),
                         SingleChildScrollView(
@@ -158,7 +158,7 @@ void dispose() {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: context.watch<HomePageModel>().apts.length,
+                          itemCount: context.watch<HomePageModel>().categoryList[0].apts.length,
                           itemBuilder: (context, i) {
                             print("${context.watch<HomePageModel>().categoryList[0].apts[i].toString()}");
                             return ShowAptsVertical1(

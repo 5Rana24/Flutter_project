@@ -5,7 +5,7 @@ import 'package:flutter_project/data/models/House.dart';
 import 'package:http/http.dart' as http;
 
 class Customerapts {
-  static const String baseUrl = "https://4b2c3c0e1aa0.ngrok-free.app";
+  static const String baseUrl = "https://5a35ab3faed0.ngrok-free.app";
  Future<List<House>> getAllApts() async {
   List<House> allHouses = [];
   int currentPage = 1;
@@ -29,7 +29,7 @@ class Customerapts {
           headers: {
             'Accept': 'application/json',
             'Authorization':
-                'Bearer 2|5SyiiaBipVFR5FAg8nWzIAbsmuhflqfPTOCFhe8e4d26f1b9',
+                'Bearer 24|VoXfwZbnYNBBwNTEHGSCw9zvpYO4HbK1OSLqH6zKb074f813',
           },
         );
 
