@@ -13,7 +13,6 @@ class Reservation {
   DateTime? updatedAt;
 
   Reservation();
-//  Reservation({});
 
 
   Reservation.fromJson(Map<String, dynamic> json) {

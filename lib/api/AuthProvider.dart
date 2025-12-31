@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_project/data/models/User.dart';
 import 'package:http/http.dart' as http;
 //import '../models/UserModel.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_project/data/models/UserModel.dart';
 import 'package:flutter_project/data/models/ProfileModel.dart';
-
 
 class AuthProvider with ChangeNotifier {
   UserModel? _user;
-  String? _token;
+  //////////////////////////////////////////dont forget
+  String _token = "3|IpPBTXrZr2zSntJH9xkf3huUMX3ugq67hyOjk6jM65be8b0a";
   ProfileModel? _profile;
+  static const String baseUrl = 'http://10.151.86.10:8000';
 
   ProfileModel? get profile => _profile;
   UserModel? get user => _user;
@@ -18,7 +19,7 @@ class AuthProvider with ChangeNotifier {
 
   /// تسجيل الدخول
   Future<String?> login(String phone) async {
-    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/auth/register');
+    final url = Uri.parse('$baseUrl/api/auth/register');
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({'phone_number': phone});
 
@@ -44,10 +45,11 @@ class AuthProvider with ChangeNotifier {
       return null;
     }
   }
+
   Future<bool> verifyOtp(String code) async {
     if (_token == null) return false;
 
-    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/auth/virify-otp');
+    final url = Uri.parse('$baseUrl/api/auth/virify-otp');
 
     try {
       var request = http.MultipartRequest('POST', url);
@@ -77,7 +79,7 @@ class AuthProvider with ChangeNotifier {
   Future<ProfileModel?> getProfile() async {
     if (_token == null) return null;
 
-    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/users/profiles/');
+    final url = Uri.parse('$baseUrl/api/users/profiles/');
     final headers = {
       'Authorization': 'Bearer $_token',
       'Accept': 'application/json',
@@ -105,7 +107,6 @@ class AuthProvider with ChangeNotifier {
       }
 
       return null;
-
     } catch (e) {
       print('getProfile error: $e');
       return null;
@@ -121,7 +122,7 @@ class AuthProvider with ChangeNotifier {
   }) async {
     if (_token == null) return false;
 
-    final url = Uri.parse('https://5a35ab3faed0.ngrok-free.app/api/users/profiles/');
+    final url = Uri.parse('$baseUrl/api/users/profiles/');
 
     try {
       var request = http.MultipartRequest('POST', url);
@@ -142,7 +143,9 @@ class AuthProvider with ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
-        print('createProfile failed: ${response.statusCode} - ${response.body}');
+        print(
+          'createProfile failed: ${response.statusCode} - ${response.body}',
+        );
         return false;
       }
     } catch (e) {

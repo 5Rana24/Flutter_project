@@ -1,161 +1,191 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/components/homePage/ShowAptsVertical1.dart';
+import 'package:flutter_project/constants/Enums/reservationMode.dart';
+import 'package:flutter_project/data/models/HomePageModel.dart';
+import 'package:flutter_project/data/models/User.dart';
+import 'package:flutter_project/data/models/reservation.dart';
+import 'package:flutter_project/view/AptRoutes/ReservationPage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:flutter_project/data/models/House.dart';
+import 'package:provider/provider.dart';
 
 class CurrentBooking extends StatefulWidget {
   State<CurrentBooking> createState() => _CurrentBooking();
 }
 
 class _CurrentBooking extends State<CurrentBooking> {
-  Map<List<DateTime>, List<House>> apts = {};
   @override
   void initState() {
     super.initState();
+    // context.watch<T>() لا يقوم بتحميل البيانات من تلقاء نفسه، هو فقط يُعيد بناء الـ widget عندما تتغير البيانات التي يوفرها الـ Provider.
+    // إذا كانت البيانات لم تُحمَّل بعد، فالقائمة التي تشاهدها ستكون فارغة عند أول build، ولن ترى أي شيء حتى تقوم بتحميل البيانات.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserModel>().loadUserReservations();
+    });
   }
+
+  String formatted(DateTime date) {
+    return "${date.day}/${date.month}/${date.year}";
+  }
+
   @override
   Widget build(BuildContext context) {
+    final homeModel = context.read<HomePageModel>();
+    final userModel = context.watch<UserModel>();
+    final currentReservations = context.watch<UserModel>().currentReservations;
+    print("${currentReservations.toString()}");
     return Scaffold(
       appBar: AppBar(),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: SlidableAutoCloseBehavior(
-              child: Column(
-                children: apts.entries.map((entry) {
-                  String date = entry.key.toString();
-                  List<House> aptsInDate = entry.value;
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      children: [
-                        Row(
+      body: userModel.isLoadingReservations
+          ? const Center(child: CircularProgressIndicator())
+          : userModel.currentReservations.isEmpty
+          ? const Center(child: Text("No Current Reservations"))
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                return SlidableAutoCloseBehavior(
+                  child: ListView.builder(
+                    itemCount: currentReservations.length,
+                    itemBuilder: (context, index) {
+                      final reservation = currentReservations[index];
+
+                      if (reservation.startDate == null ||
+                          reservation.houseId == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      final apt = context.read<HomePageModel>().getAptById(
+                        reservation.houseId!,
+                      );
+
+                      if (apt == null) return const SizedBox.shrink();
+
+                      return Slidable(
+                        key: ValueKey(reservation.id),
+                        startActionPane: ActionPane(
+                          motion: const DrawerMotion(),
+                          extentRatio: 0.6,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                date,
-                                style: TextStyle(
-                                  fontSize: Theme.of(
-                                    context,
-                                  ).textTheme.bodyMedium!.fontSize,
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                ),
-                              ),
+                            SlidableAction(
+                              onPressed: (actionContext) async {
+                                print("Pressed Update");
+
+                                // أغلق الـ Slidable
+                                Slidable.of(actionContext)?.close();
+                                final updated = await Navigator.push<bool>(
+                                  context, // ⚠️ استخدم context الخارجي
+                                  MaterialPageRoute(
+                                    builder: (context) => ReservationPage(
+                                      house: context
+                                          .read<HomePageModel>()
+                                          .getAptById(reservation.houseId!)!,
+                                      mode: ReservationMode.update,
+                                      reservation: reservation,
+                                    ),
+                                  ),
+                                );
+
+                                // 0nly if the reservation was updated
+                                if (updated == true) {
+                                  context
+                                      .read<UserModel>()
+                                      .loadUserReservations();
+                                }
+                                print("Update ${reservation.id}");
+                              },
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              label: 'Update',
+                              padding: EdgeInsets.all(10),
                             ),
-                            Expanded(
-                              child: Container(
-                                margin: const EdgeInsets.only(
-                                  top: 25.0,
-                                  bottom: 25.0,
-                                  right: 20.0,
-                                ),
-                                child: Divider(
-                                  thickness: 1, // سمك الخط
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary, // لون الخط
-                                  height: 20, // المسافة حول الـ Divider)
-                                ),
-                              ),
+                            SlidableAction(
+                              onPressed: (_) {
+                                print("Cancel ${reservation.id}");
+                              },
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.tertiary,
+                              label: 'Cancel',
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.all(10),
                             ),
                           ],
                         ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: aptsInDate.length,
-                          itemBuilder: (context, i) {
-                            return Slidable(
-                              key: ValueKey(i),
-
-                              // السحب من اليمين لليسار فقط
-                              startActionPane: ActionPane(
-                                motion: const DrawerMotion(),
-                                extentRatio:
-                                    0.6, // نسبة المساحة المكشوفة (60% من عرض الكارد)
-
-                                children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        // تنفيذ Adjust
-                                        print("Adjust pressed for apt $i");
-                                      },
-                                      child: Container(
-                                        margin: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "Adjust",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                        child: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              /// 📅 التاريخ
+                              Center(
+                                child: Text(
+                                  "${formatted(reservation.startDate!)} - ${formatted(reservation.endDate!)}",
+                                  style: TextStyle(
+                                    fontSize: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall!.fontSize,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.tertiary,
                                   ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        // تنفيذ Cancel
-                                        print("Cancel pressed for apt $i");
-                                      },
-                                      child: Container(
-                                        height: constraints.maxHeight,
-                                        width: constraints.maxWidth,
-                                        margin: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.tertiary,
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
 
-                              // الكارد نفسه
-                              child: ShowAptsVertical1(
+                              /// 🏠 الشقة
+                              ShowAptsVertical1(
                                 cardHeight: constraints.maxHeight,
                                 cardWidth: constraints.maxWidth,
-                                apt: aptsInDate[i],
+                                apt: apt,
                                 classPremission: false,
                               ),
-                            );
-                          },
+
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 4), 
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1, // ✅ ثلث المساحة
+                                      child: Text(
+                                        "Id : ${reservation.id}",
+                                        style: TextStyle(
+                                          fontSize: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall!.fontSize,
+                                          fontWeight: FontWeight.normal
+                                        ),
+                                      ),
+                                    ),
+                                
+                                    const SizedBox(
+                                      height: 20,
+                                      child: VerticalDivider(thickness: 1),
+                                    ),
+                                
+                                    Expanded(
+                                      flex: 2, // ✅ باقي المساحة
+                                      child: Text(
+                                        "Status : ${reservation.status}",
+                                        style: TextStyle(
+                                          fontSize: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall!.fontSize,
+                                          fontWeight: FontWeight.normal
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

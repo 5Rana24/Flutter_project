@@ -39,6 +39,7 @@ dependencies:
   table_calendar: ^3.1.2
   cached_network_image: ^3.3.1
   flutter_svg: ^2.0.7
+  # shared_preferences: ^2.2.2
   image_picker: ^1.2.1
   provider: ^5.0.0
 
@@ -74,9 +75,7 @@ flutter:
     - images/previous.jpg
     - images/current.png
     - images/cancel.jpg
-    - images/top-rented.svg
     - images/all.png
-    - images/top-rented2.png
     - images/damas.jpg
     # - images/location1.png
   #   - images/a_dot_ham.jpeg

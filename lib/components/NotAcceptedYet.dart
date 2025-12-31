@@ -6,8 +6,7 @@ import 'package:flutter_project/view/MainRoutes/homepage.dart';
 import 'package:provider/provider.dart';
 
 class Notacceptedyet extends StatefulWidget {
- 
-   State<Notacceptedyet> createState() => _Notacceptedyet();
+  State<Notacceptedyet> createState() => _Notacceptedyet();
 }
 
 class _Notacceptedyet extends State<Notacceptedyet> {
@@ -23,14 +22,16 @@ class _Notacceptedyet extends State<Notacceptedyet> {
     if (isChecking) return;
     isChecking = true;
 
-    final res = await ApiService.getProfile( context.read<AuthProvider>().token!,);
+    final res = await ApiService.getProfile(
+      context.read<AuthProvider>().token!,
+    );
 
     if (!mounted) return;
 
     if (res['data'] != null && res['data']['status'] == 'approved') {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => Homepage(token:context.read<AuthProvider>().token!,),
+          builder: (_) => Homepage(token: context.read<AuthProvider>().token!),
         ),
       );
     } else {
@@ -41,7 +42,8 @@ class _Notacceptedyet extends State<Notacceptedyet> {
       });
     }
   }
-     Widget build(BuildContext context) {
+
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(
@@ -61,6 +63,4 @@ class _Notacceptedyet extends State<Notacceptedyet> {
       ),
     );
   }
-
 }
-

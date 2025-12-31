@@ -15,6 +15,7 @@ class PageShowcards extends StatefulWidget {
   });
   State<PageShowcards> createState() => _PageShowcards();
 }
+
 ////////////////////////////this just to opeen an page with a msg
 class _PageShowcards extends State<PageShowcards> {
   @override

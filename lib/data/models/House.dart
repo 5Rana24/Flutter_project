@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_project/api/AuthProvider.dart';
 import 'package:flutter_project/api/reservation_service.dart';
 import 'package:flutter_project/data/models/reservation.dart';
 import 'package:http/http.dart' as http;
@@ -32,6 +33,10 @@ class House {
   String? updatedAt;
   String? cityName;
   String? zoneName;
+  bool? isFavorited;
+  double? ratingAvg;
+  int? ratingsCount;
+
   List<Reservation> reservations = [];
   String get fullImageUrl {
     if (imagePath == null || imagePath!.isEmpty) {
@@ -47,23 +52,10 @@ class House {
       "storage/app/public/",
       "storage/",
     );
-
+    // i should see it
     return "https://5f86981a5274.ngrok-free.app/$fixedPath";
   }
 
-  //   String get fullImageUrl {
-  //   if (imagePath == null || imagePath!.isEmpty) {
-  //     return ""; // لا يوجد صورة
-  //   }
-
-  //   // إذا الرابط كامل (من النت)
-  //   if (imagePath!.startsWith("http://") || imagePath!.startsWith("https://")) {
-  //     return imagePath!;
-  //   }
-
-  //   // إذا مجرد مسار من السيرفر
-  //   return "https://5f86981a5274.ngrok-free.app$imagePath";
-  // }
   House() {
     cityName = "rana";
     zoneName = "syyi";
@@ -122,29 +114,36 @@ class House {
     hasBalcony = json['has_balcony'] == 1;
     hasElevator = json['has_elevator'] == 1;
 
+    isFavorited = json['is_favorited'];
+    ///i should look at it
+    ratingAvg = (json['ratings_avg_rating'] as num?)?.toDouble();
+    ratingsCount = json['ratings_count'];
+
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
   List<DateTime> getBookedDays() {
-  final List<DateTime> days = [];
+    final List<DateTime> days = [];
 
-  for (final reservation in reservations) {
-    if (reservation.startDate == null || reservation.endDate == null) continue;
+    for (final reservation in reservations) {
+      if (reservation.startDate == null || reservation.endDate == null)
+        continue;
 
-    DateTime current = reservation.startDate!;
-    final end = reservation.endDate!;
+      DateTime current = reservation.startDate!;
+      final end = reservation.endDate!;
 
-    while (!current.isAfter(end)) {
-      days.add(DateTime(current.year, current.month, current.day));
-      current = current.add(const Duration(days: 1));
+      while (!current.isAfter(end)) {
+        days.add(DateTime(current.year, current.month, current.day));
+        current = current.add(const Duration(days: 1));
+      }
     }
+
+    return days;
   }
 
-  return days;
-}
-  Future<void> loadReservations() async {
+  Future<void> loadReservations(String token) async {
     if (id == null) return;
     print(" 👌👌 Loading Reservations of the house");
-    reservations = await ReservationService.getHouseReservations(id!);
+    reservations = await ReservationService.getHouseReservations(id!, token);
   }
 }

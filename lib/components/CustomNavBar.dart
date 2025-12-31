@@ -9,11 +9,11 @@ import 'package:flutter_project/view/MainRoutes/homepage.dart';
 import 'package:provider/provider.dart';
 
 class CustomNavBar extends StatelessWidget {
-  const CustomNavBar({ Key? key}) : super(key: key);
+  const CustomNavBar({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height*0.08,
+      height: MediaQuery.of(context).size.height * 0.08,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.circular(30),
@@ -34,7 +34,10 @@ class CustomNavBar extends StatelessWidget {
             color: Colors.white,
             onPressed: () {
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => Homepage(token: context.read<AuthProvider>().token! ,)),
+                MaterialPageRoute(
+                  builder: (context) =>
+                      Homepage(token: context.read<AuthProvider>().token!),
+                ),
               );
             },
           ),
@@ -43,7 +46,10 @@ class CustomNavBar extends StatelessWidget {
             color: Colors.white,
             onPressed: () {
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => Scaffold(appBar: AppBar(),body: SearchPage(),)),
+                MaterialPageRoute(
+                  builder: (context) =>
+                      Scaffold(appBar: AppBar(), body: SearchPage()),
+                ),
               );
             },
           ),
@@ -60,9 +66,9 @@ class CustomNavBar extends StatelessWidget {
             icon: const Icon(Icons.add),
             color: Colors.white,
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => BooikngScreen()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (context) => BooikngScreen()));
             },
           ),
         ],

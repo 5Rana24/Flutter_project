@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_project/api/AuthProvider.dart';
 import 'package:flutter_project/api/reservation_service.dart';
 import 'package:flutter_project/components/CustomNavBar.dart';
+import 'package:flutter_project/constants/Enums/reservationMode.dart';
 import 'package:flutter_project/data/models/House.dart';
 import 'package:flutter_project/data/models/User.dart';
 import 'package:flutter_project/data/models/reservation.dart';
@@ -12,7 +14,9 @@ import 'package:intl/intl.dart';
 
 class ReservationPage extends StatefulWidget {
   final House house;
-  ReservationPage({required this.house});
+  final ReservationMode mode;
+  Reservation? reservation;
+  ReservationPage({required this.house, required this.mode, this.reservation});
   State<ReservationPage> createState() => _Reservation();
 }
 
@@ -35,7 +39,6 @@ class _Reservation extends State<ReservationPage> {
     super.initState();
     _selectedDay = _focusedDay;
     _reservationsFuture = _loadBookedDates();
-
   }
 
   @override
@@ -46,13 +49,22 @@ class _Reservation extends State<ReservationPage> {
   ///////////////////////////////////////////////////////To get the reservation of the house
   Future<void> _loadBookedDates() async {
     try {
-    print("🎉 تحميل الحجوزات");
-    await widget.house.loadReservations();
-    bookedDates = widget.house.getBookedDays();
-  } catch (e) {
-    print("❌ Failed to load reservations: $e");
+      print("🎉 تحميل الحجوزات");
+      await widget.house.loadReservations(context.read<AuthProvider>().token!);
+      bookedDates = widget.house.getBookedDays();
+      // if the mode is update the user can select the same days in  the reservation
+      if (widget.mode == ReservationMode.update && widget.reservation != null) {
+        final start = dateOnly(widget.reservation!.startDate!);
+        final end = dateOnly(widget.reservation!.endDate!);
 
-  }
+        bookedDates.removeWhere((day) {
+          final cleanDay = dateOnly(day);
+          return !cleanDay.isBefore(start) && !cleanDay.isAfter(end);
+        });
+      }
+    } catch (e) {
+      print("❌ Failed to load reservations: $e");
+    }
   }
   // the reason to need those when i select one day(RangeSelectionMode.toggledOn) table calender do:
   //_rangeStart = selectedDay
@@ -176,7 +188,7 @@ class _Reservation extends State<ReservationPage> {
         }
 
         if (snapshot.hasError) {
-          return  Scaffold(
+          return Scaffold(
             appBar: AppBar(),
             body: Center(child: Text("Downliading Reservations Failed")),
           );
@@ -190,7 +202,8 @@ class _Reservation extends State<ReservationPage> {
 
   Widget ReservationWidget(List<DateTime> bookedDates) {
     DateTime? start = getStartDate();
-    DateTime? end = getEndDate();int days = 0;
+    DateTime? end = getEndDate();
+    int days = 0;
 
     if (start != null && end != null) {
       days = end.difference(start).inDays + 1;
@@ -247,9 +260,10 @@ class _Reservation extends State<ReservationPage> {
                   /////price
                   Container(
                     margin: EdgeInsets.only(left: screenWidth * 0.035),
-                    child: Text( start != null && end != null
-                    ? "${(widget.house.price! * days).floor()} SYP /day"
-                    : "",
+                    child: Text(
+                      start != null && end != null
+                          ? "${(widget.house.price! * days).floor()} SYP /day"
+                          : "",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: Theme.of(
@@ -276,30 +290,51 @@ class _Reservation extends State<ReservationPage> {
                         }
 
                         try {
+                          //updating reservation
+                          if (widget.mode == ReservationMode.update) {
+                            await ReservationService.updateReservation(
+                              reservationId: widget.reservation!.id!,
+                              startDate: start,
+                              endDate: end,
+                              token: userModel.token,
+                            );
 
+                            _showRangeErrorOverlay(
+                              "Your request has been sent to the owner \nyou will get the response through a notification ",
+                            );
+                            Navigator.pop(context, true);
+                          }
                           // making reservation
-                          await userModel.createReservation(
-                            start,
-                            end,
-                            widget.house.id!,
-                          );
-                          _showRangeErrorOverlay(
-                            "Your request has been sent to the owner \n you will get the response through a notification ",
-                          );
+                          else {
+                            await userModel.createReservation(
+                              start,
+                              end,
+                              widget.house.id!,
+                            );
+                            _showRangeErrorOverlay(
+                              "Your request has been sent to the owner \nyou will get the response through a notification ",
+                            );
+                          }
                           ///////////////////////Dealing with this reservation after that the buttons should be changed
-                        }  on ApiException catch (e) {
+                        } on ApiException catch (e) {
                           //For exceptions from Api
                           _showRangeErrorOverlay("$e");
                           // after u see the exception u know now there is a change in  house reservation  so update the caledar
-                            await _loadBookedDates();
-                            setState(() {});
+                          await _loadBookedDates();
+                          setState(() {});
                         } catch (e) {
                           //else Excpetions
-                          _showRangeErrorOverlay("we have a problem with the server , try again later");
+                          _showRangeErrorOverlay(
+                            "we have a problem with the server , try again later",
+                          );
                           print("Unexpected error: $e");
                         }
                       },
-                      child: Text("Book"),
+                      child: Text(
+                        widget.mode == ReservationMode.update
+                            ? "Update"
+                            : "Book",
+                      ),
                     ),
                   ),
                 ],
@@ -452,6 +487,11 @@ class _Reservation extends State<ReservationPage> {
         ),
       ),
     );
+  }
+
+  //to compare btw two dates their hour is 0:0 both
+  DateTime dateOnly(DateTime d) {
+    return DateTime(d.year, d.month, d.day);
   }
 }
 

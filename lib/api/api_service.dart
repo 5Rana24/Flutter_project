@@ -2,26 +2,27 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'https://5a35ab3faed0.ngrok-free.app';
+  static const String baseUrl = 'http://10.151.86.10:8000';
 
   static Future<Map<String, dynamic>> login(String phone) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/auth/register'),
-      headers: {'Accept': 'application/json',
-                 'Content-Type':'application/json',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
       body: jsonEncode({'phone_number': phone}),
     );
     return jsonDecode(response.body);
   }
 
-  static Future<Map<String, dynamic>> verifyOtp(String otp, String token) async {
+  static Future<Map<String, dynamic>> verifyOtp(
+    String otp,
+    String token,
+  ) async {
     final response = await http.post(
       Uri.parse('$baseUrl/api/auth/virify-otp'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
       body: {'otp': otp},
     );
     return jsonDecode(response.body);
@@ -30,10 +31,7 @@ class ApiService {
   static Future<Map<String, dynamic>> getProfile(String token) async {
     final response = await http.get(
       Uri.parse('$baseUrl/api/users/profiles/'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Accept': 'application/json',
-      },
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
     );
     return jsonDecode(response.body);
   }
@@ -54,20 +52,23 @@ class ApiService {
     request.headers['Authorization'] = 'Bearer $token';
     request.headers['Accept'] = 'application/json';
 
-    request.fields['user_id'] = userId.toString();
+    request.fields['id'] = userId.toString();
     request.fields['first_name'] = firstName;
     request.fields['last_name'] = lastName;
     request.fields['birthdate'] = birthdate;
 
     request.files.add(await http.MultipartFile.fromPath('image', imagePath));
-    request.files.add(await http.MultipartFile.fromPath('ID_image', idImagePath));
+    request.files.add(
+      await http.MultipartFile.fromPath('ID_image', idImagePath),
+    );
 
     final response = await request.send();
     final resBody = await response.stream.bytesToString();
     return jsonDecode(resBody);
   }
+
   //////////////////////////////////////what i changed
-   static Future<Map<String, dynamic>> logout(String token) async {
+  static Future<Map<String, dynamic>> logout(String token) async {
     final url = Uri.parse('$baseUrl/api/logout');
 
     try {
@@ -90,10 +91,7 @@ class ApiService {
         };
       }
     } catch (e) {
-      return {
-        'status': 'error',
-        'message': 'خطأ في الاتصال بالسيرفر',
-      };
+      return {'status': 'error', 'message': 'خطأ في الاتصال بالسيرفر'};
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/constants/Enums/reservationMode.dart';
 import 'package:flutter_project/data/models/User.dart';
 import 'package:flutter_project/view/AptRoutes/ReservationPage.dart';
 import 'package:http/http.dart' as http;
@@ -99,7 +100,7 @@ class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
                         children: [
                           Icon(Icons.star, color: Colors.orange),
                           Text(
-                            "3.5",
+                            widget.house.ratingAvg.toString(),
                             // '${widget.house.rating}',
                             style: TextStyle(fontSize: 16),
                           ),
@@ -192,7 +193,7 @@ class _ApartmentDetailsPageState extends State<ApartmentDetailsPage> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          ReservationPage(house: widget.house,)
+                          ReservationPage(house: widget.house,mode: ReservationMode.create,)
                     ),
                   );
                 },

@@ -5,14 +5,28 @@ import 'package:flutter_project/view/BookingRoutes/current_booking.dart';
 import 'package:flutter_project/view/BookingRoutes/previous_booking.dart';
 
 class BooikngScreen extends StatelessWidget {
-   
   @override
   Widget build(BuildContext context) {
     List<List<dynamic>> options = [
-    ["Current", "images/current.png", CurrentBooking(), Theme.of(context).colorScheme.primary],
-    ["Previous", "images/previous.jpg",PreviousBooking(),Theme.of(context).colorScheme.secondary],
-    ["Canceled", "images/cancel.jpg",CanceledBooking(),Color.fromARGB(255, 145, 170, 167)],
-  ];
+      [
+        "Current",
+        "images/current.png",
+        CurrentBooking(),
+        Theme.of(context).colorScheme.primary,
+      ],
+      [
+        "Previous",
+        "images/previous.jpg",
+        PreviousBooking(),
+        Theme.of(context).colorScheme.secondary,
+      ],
+      [
+        "Canceled",
+        "images/cancel.jpg",
+        CanceledBooking(),
+        Color.fromARGB(255, 145, 170, 167),
+      ],
+    ];
 
     return Scaffold(
       appBar: AppBar(),
@@ -59,7 +73,14 @@ class BooikngScreen extends StatelessWidget {
                                   ),
                                   Expanded(
                                     child: Center(
-                                      child: Text(options[i][0].toString(), style: TextStyle(color: Theme.of(context).colorScheme.onTertiary),),
+                                      child: Text(
+                                        options[i][0].toString(),
+                                        style: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onTertiary,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],

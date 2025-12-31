@@ -1,0 +1,1 @@
+enum ReservationMode { create, update }

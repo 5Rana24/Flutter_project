@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/api/AuthProvider.dart';
 import 'package:flutter_project/api/api_service.dart';
-import 'package:flutter_project/data/models/UserModel.dart';
+import 'package:flutter_project/data/models/User.dart';
 import 'package:flutter_project/view/DrawerRoutes/Settings.dart';
 import 'package:flutter_project/view/DrawerRoutes/favourite_screen.dart';
 import 'package:flutter_project/view/Login/ProfileForm.dart';
@@ -10,13 +10,13 @@ import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatelessWidget {
   double iconsSize;
-  ///ImageProvider profileImg;
+  ImageProvider profileImg;
   GlobalKey<ScaffoldState> scaffoldKey;
   double cardwidth;
   double cardHeight;
   CustomDrawer({
     required this.iconsSize,
-   // required this.profileImg,
+    required this.profileImg,
     required this.scaffoldKey,
     required this.cardHeight,
     required this.cardwidth,
@@ -36,9 +36,11 @@ class CustomDrawer extends StatelessWidget {
                 Container(
                   width: iconsSize * 2,
                   height: iconsSize * 2,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: Image.asset("images/Img.png"),
+                  child: CircleAvatar(
+                    radius: 100,
+                    backgroundImage: context
+                        .watch<UserModel>()
+                        .getProfileImg, // إذا كان ImageProvider مثل NetworkImage , i should see it /////////////////////////////
                   ),
                 ),
                 Expanded(
@@ -93,8 +95,7 @@ class CustomDrawer extends StatelessWidget {
               title: Text("Log Out", style: textTheme),
               leading: Icon(Icons.logout, color: iconColor),
               onTap: () {
-                showLogoutDialog(context,context.read<AuthProvider>().token!);
-              
+                showLogoutDialog(context, context.read<AuthProvider>().token!);
               },
             ),
           ],
@@ -161,20 +162,20 @@ class CustomDrawer extends StatelessWidget {
       },
     );
   }
-   Future<void> handleLogout(BuildContext context, String token) async {
-  // 1️⃣ انتقل فورًا إلى صفحة Login
-  Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(builder: (_) => const LoginScreen()),
-    (route) => false,
-  );
 
-  // 2️⃣ بعدها نفّذ logout في الخلفية (best effort)
-  try {
-    await ApiService.logout(token);
-  } catch (e) {
-    // تجاهل الخطأ – المستخدم خرج بالفعل
-    
+  Future<void> handleLogout(BuildContext context, String token) async {
+    // 1️⃣ انتقل فورًا إلى صفحة Login
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    );
+
+    // 2️⃣ بعدها نفّذ logout في الخلفية (best effort)
+    try {
+      await ApiService.logout(token);
+    } catch (e) {
+      // تجاهل الخطأ – المستخدم خرج بالفعل
+    }
+    if (!context.mounted) return; // ✅ أمان إضافي
   }
-  if (!context.mounted) return; // ✅ أمان إضافي
-}
 }

@@ -1,23 +1,20 @@
 import 'package:flutter_project/data/models/House.dart';
-
 class Favourite {
-  String? favouriteId;
-  String? userId;
-  String? houseId;
-  
-  static List<House> apts = [];
+  int? favouriteId;
+  int? userId;
+  int? houseId;
 
-  static void addApt(House apt) {
-    if (!apts.contains(apt)) {
-      apts.add(apt);
-    }
-  }
+  Favourite({
+    required this.favouriteId,
+    required this.userId,
+    required this.houseId,
+  });
 
-  static void removeApt(House apt) {
-    apts.remove(apt);
-  }
-
-  static bool isFavourite(House apt) {
-    return apts.contains(apt);
+  factory Favourite.fromJson(Map<String, dynamic> json) {
+    return Favourite(
+      favouriteId: json['id'], // id الخاص بالمفضلة
+      userId: json['pivot']['user_id'],
+      houseId: json['pivot']['house_id'],
+    );
   }
 }
