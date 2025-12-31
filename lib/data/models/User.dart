@@ -6,7 +6,7 @@ import 'package:flutter_project/data/models/reservation.dart';
 import 'package:flutter_project/data/models/favourite.dart';
 
 class UserModel extends ChangeNotifier {
-  final String token = "3|IpPBTXrZr2zSntJH9xkf3huUMX3ugq67hyOjk6jM65be8b0a";
+  final String token= "3|IpPBTXrZr2zSntJH9xkf3huUMX3ugq67hyOjk6jM65be8b0a";
   final int id;
   final String phoneNumber;
   final String status;
@@ -77,7 +77,9 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final reservations = await ReservationService.getUserReservations(token);
+      final reservations = await ReservationService.getUserReservations(
+        token,
+      );
 
       // sorted by nearest to today
       reservations.sort(
@@ -192,7 +194,9 @@ class UserModel extends ChangeNotifier {
 
   // I should see
   Future<void> loadFavourites() async {
-    _favourites = await FavoruiteService().getFavourites(token);
+    _favourites = await FavoruiteService().getFavourites(
+      token,
+    );
     notifyListeners();
   }
 
@@ -203,7 +207,10 @@ class UserModel extends ChangeNotifier {
 
   // I should see
   Future<void> addToFavourite(House house) async {
-    await FavoruiteService().addToFavourite(token: token, houseId: house.id!);
+    await FavoruiteService().addToFavourite(
+      token: token,
+      houseId: house.id!,
+    );
     await loadFavourites();
   }
 

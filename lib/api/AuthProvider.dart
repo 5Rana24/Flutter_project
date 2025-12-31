@@ -120,13 +120,17 @@ class AuthProvider with ChangeNotifier {
     required String image,
     required String idImage,
   }) async {
-    if (_token == null) return false;
+    if (_token == null || _user == null) return false;
 
     final url = Uri.parse('$baseUrl/api/users/profiles/');
 
     try {
       var request = http.MultipartRequest('POST', url);
       request.headers['Authorization'] = 'Bearer $_token';
+      request.headers['Accept'] = 'application/json';
+
+      // 🔥 أهم إضافة: user_id يروح تلقائياً
+      request.fields['user_id'] = _user!.id.toString();
 
       request.fields['first_name'] = firstName;
       request.fields['last_name'] = lastName;
@@ -138,7 +142,8 @@ class AuthProvider with ChangeNotifier {
       final streamed = await request.send();
       final response = await http.Response.fromStream(streamed);
 
-      final data = jsonDecode(response.body);
+      print("PROFILE CREATE STATUS: ${response.statusCode}");
+      print("PROFILE CREATE BODY: ${response.body}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;

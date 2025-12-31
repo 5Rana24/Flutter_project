@@ -13,7 +13,7 @@ class WaitingApprovalScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.hourglass_top, size: 80, color: Colors.orange),
+              Icon(Icons.hourglass_top, size: 80, color: Colors.teal),
               SizedBox(height: 24),
               Text(
                 'تم إرسال بياناتك بنجاح.\nيرجى الانتظار حتى تتم مراجعتها من قبل الإدارة.',
